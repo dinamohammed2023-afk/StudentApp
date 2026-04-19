@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/dinamohammed2023-afk/StudentApp.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'javac *.java'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'java TestStudent'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t dinaa22/studentapp .'
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                bat 'docker login -u dinaa22 -p dinadina2004'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                bat 'docker push dinaa22/studentapp'
+            }
+        }
+    }
+}
