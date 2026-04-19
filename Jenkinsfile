@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/dinamohammed2023-afk/StudentApp.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 bat 'javac *.java'
@@ -17,25 +11,22 @@ pipeline {
 
         stage('Test') {
             steps {
-                bat 'java TestStudent'
+                bat 'java Main'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t dinaa22/studentapp .'
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                bat 'docker login -u dinaa22 -p dinadina2004'
+                bat 'docker build -t dinaa22/studentapp:latest .'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                bat 'docker push dinaa22/studentapp'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    bat 'docker login -u %USER% -p %PASS%'
+                    bat 'docker push dinaa22/studentapp:latest'
+                }
             }
         }
     }
